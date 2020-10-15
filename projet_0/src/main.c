@@ -14,7 +14,7 @@ int des() {
     return rand() % 6 + 1;
 }
 
-
+ 
 
 int main() {
     /*On definit les descripteurs de fichiers du maitre du jeu (processus pere) qui en a 2 : 
