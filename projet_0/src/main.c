@@ -5,55 +5,53 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
-
-/** Définition des constantes de l'environnement de jeu. */
-#define NOMBRE_JOUEURS 4 // Nombre de joueurs dans une partie ; par défaut 4, minimum 2, maximum 4.
-#define NOMBRE_CHEVEAUX 4 // Nombre de cheveaux par joueurs ; par défaut 4, minimum 1.
-#define TAILLE_PLATEAU 56 // Taille du plateau de jeu en nombre de cases ; par défaut 56, minimum 4 (doit être un multiple de 4).
-
-
-/*initialisation du générateur aléatoire
-* lancé du dé (les valeurs sont entre 1 et 6)
-*/
-int des() {
-    srand(time(NULL));
-    return rand() % 6 + 1;
-}
-
- 
+#include "../headers/pc_jeu.h"
 
 int main() {
-    /*On definit les descripteurs de fichiers du maitre du jeu (processus pere) qui en a 2 : 
-    *    - le premier pour intéragir du maitre au joueur definit par fdMaitre[0]
-    *    - et le deuxieme pour interagir du joueur au maitre definit par fdMaitre[1]
+    /* On definit les descripteurs de fichiers du maitre du jeu (processus pere) qui en a 2 :
+    * - le premier pour intéragir du maitre au joueur definit par fdMaitre[0]
+    * - et le deuxieme pour interagir du joueur au maitre definit par fdMaitre[1]
     * Ensuite on definit un descripteur de fichier par interaction entre 2 joueurs consecutifs
     */
-    
-    int fdMaitre[2][2]; 
-    pipe(fdMaitre[0]);
-    pipe(fdMaitre[1]);
-    pid_t pidMaitre = getpid(); // Récupération du PID du processus père pour le transmettre aux fils.
-  
-    /** Définition des descripteurs de fichier pour les interactions entre deux joueurs consécutifs. */
-    int fdJoueur[NOMBRE_JOUEURS][2];
-    
+    int fdMaitre[2][2]; // Descripteurs de fichiers du maître du jeu.
+    pipe(fdMaitre[0]); // Tube du maître au joueur 0 (entrée du cycle).
+    pipe(fdMaitre[1]); // Tube du joueur 0 au maître (sortie du cycle).
+    pid_t pidMaitre = getpid(); // PID du processus père (pour transmission aux fils).
+    int fdJoueur[NOMBRE_JOUEURS][2]; // Descripteurs de fichiers pour les interactions entre deux joueurs consécutifs.
+    int numeroJoueur = -1; // Numéro du joueur courant ; le numéro du maître est -1.
+
     /**
      * Définition de l'environnement de jeu.
      */
-    int plateau[TAILLE_PLATEAU];
-    int ecuries[NOMBRE_JOUEURS][NOMBRE_CHEVEAUX];
+    Plateau plateau; // Déclaration du plateau de jeu.
+    viderPlateau(&plateau); // Initialisation du plateau avec toutes les cases vides.
     int chevaux[NOMBRE_JOUEURS][NOMBRE_CHEVEAUX];
-    // Ne pas oublier de considerer que l'on peut jouer de 2 a 4 joueurs
 
 
+    for(int i = 0; i < NOMBRE_JOUEURS; i++) {
 
-    for(int i = 0; i < 4; i++) pipe(fdJoueur[i]); // On cree les pipes qui correspondent aux interactions entre joueurs
-    
-    for (int i = 0; i < 6; i++) {
-        if (getpid() == pidMaitre){
-            fork();
+        pipe(fdJoueur[i]); // On crée les pipes qui correspondent aux interactions entre joueurs.
+
+        if (getpid() == pidMaitre) {
+            fork(); // On crée un fils pour chaque joueur.
+            if (getpid() != pidMaitre) numeroJoueur = i; // On définit le numéro de chaque joueur.
         }
     }
 
+    switch (numeroJoueur) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            printf("Je suis le joueur %d. (%d : %d)\n", numeroJoueur, getpid(), getpid()==pidMaitre);
+            break;
+        case -1:
+            printf("Je suis le maître du jeu ! (%d : %d)\n", getpid(), getpid()==pidMaitre);
+            break;
+        default:
+            printf("Je ne devrai pas arriver ici...\n");
+            break;
+    }
 
+    return 0;
 }
