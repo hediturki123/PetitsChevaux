@@ -4,6 +4,17 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
+
+/*initialisation du générateur aléatoire
+* lancé du dé (les valeurs sont entre 1 et 6)
+*/
+int des() {
+    srand(time(NULL));
+    return rand() % 6 + 1;
+}
+
+
 
 int main() {
     /*On definit les descripteurs de fichiers du maitre du jeu (processus pere) qui en a 2 : 
@@ -12,7 +23,7 @@ int main() {
     * Ensuite on definit un descripteur de fichier par interaction entre 2 joueurs consecutifs
     */
     
-    int fdMaitre[2][2]; 
+   int fdMaitre[2][2]; 
     int fdJoueur[4][2];
     pipe(fdMaitre[0]);
     pipe(fdMaitre[1]);
@@ -31,5 +42,6 @@ int main() {
             fork();
         }
     }
+
 
 }
