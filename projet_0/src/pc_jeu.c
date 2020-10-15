@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
-#include "../headers/pc_jeu.h"
+#include "../hdr/pc_jeu.h"
 
 // Fonction permettant de vider un plateau de jeu.
 // Les cases régulières aussi bien que les écuries sont réinitialisées à CASE_VIDE (-1).

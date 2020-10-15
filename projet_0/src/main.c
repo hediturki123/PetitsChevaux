@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
-#include "../headers/pc_jeu.h"
+#include "../hdr/pc_jeu.h"
 
 int main() {
     /* On definit les descripteurs de fichiers du maitre du jeu (processus pere) qui en a 2 :
