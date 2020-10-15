@@ -6,6 +6,12 @@
 #include <sys/wait.h>
 #include <time.h>
 
+/** Définition des constantes de l'environnement de jeu. */
+#define NOMBRE_JOUEURS 4 // Nombre de joueurs dans une partie ; par défaut 4, minimum 2, maximum 4.
+#define NOMBRE_CHEVEAUX 4 // Nombre de cheveaux par joueurs ; par défaut 4, minimum 1.
+#define TAILLE_PLATEAU 56 // Taille du plateau de jeu en nombre de cases ; par défaut 56, minimum 4 (doit être un multiple de 4).
+
+
 /*initialisation du générateur aléatoire
 * lancé du dé (les valeurs sont entre 1 et 6)
 */
@@ -23,14 +29,20 @@ int main() {
     * Ensuite on definit un descripteur de fichier par interaction entre 2 joueurs consecutifs
     */
     
-   int fdMaitre[2][2]; 
-    int fdJoueur[4][2];
+    int fdMaitre[2][2]; 
     pipe(fdMaitre[0]);
     pipe(fdMaitre[1]);
-    pid_t pidMaitre = getpid();
-    int plateau[56];
-    int maisons[6][4];
-    int chevaux[6][4];
+    pid_t pidMaitre = getpid(); // Récupération du PID du processus père pour le transmettre aux fils.
+  
+    /** Définition des descripteurs de fichier pour les interactions entre deux joueurs consécutifs. */
+    int fdJoueur[NOMBRE_JOUEURS][2];
+    
+    /**
+     * Définition de l'environnement de jeu.
+     */
+    int plateau[TAILLE_PLATEAU];
+    int ecuries[NOMBRE_JOUEURS][NOMBRE_CHEVEAUX];
+    int chevaux[NOMBRE_JOUEURS][NOMBRE_CHEVEAUX];
     // Ne pas oublier de considerer que l'on peut jouer de 2 a 4 joueurs
 
 
