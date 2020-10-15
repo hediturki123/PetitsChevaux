@@ -37,6 +37,6 @@ int entierAleatoire(int, int);
 
 // Fonction permettant de lancer un dé à six faces.
 // Le résultat est un entier compris entre 1 et 6.
-int lancerDeDe(void);
+int lancerDe6(void);
 
 #endif // !__PC_JEU_H__
