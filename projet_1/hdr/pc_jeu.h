@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <time.h>
+
 #ifndef __PC_JEU_H__
 #define __PC_JEU_H__
 

@@ -5,8 +5,8 @@ CC=gcc
 CFLAGS=-Wall -std=c11
 
 # Listes des dépendances et des fichiers objets
-DEPS=headers/pc_jeu.h
-OBJS=obj/main.o obj/pc_jeu.o
+DEPS=hdr/pc_jeu.h hdr/pc_utils.h
+OBJS=obj/main.o obj/pc_jeu.o obj/pc_utils.o
 
 # Nom de l'exécutable
 EXEC=main

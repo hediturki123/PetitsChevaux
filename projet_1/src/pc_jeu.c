@@ -1,5 +1,3 @@
-#include <stdlib.h>
-#include <time.h>
 #include "../hdr/pc_jeu.h"
 
 // Fonction permettant de vider un plateau de jeu.
