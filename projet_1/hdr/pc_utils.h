@@ -2,6 +2,4 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-int redirectInput(int);
-
-int redirectOutput(int)
+int redirect(int oldFd, int newFd);

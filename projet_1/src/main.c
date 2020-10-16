@@ -50,8 +50,8 @@ int main() {
         case 3:
             break;
         case -1:
-            redirectOutput(fdMaitre[0]);
-            redirectInput(fdMaitre[1]);
+            redirect(stdin, fdMaitre[0]);
+            redirect(stdout, fdMaitre[1]);
             break;
         default:
             printf("Je ne devrais pas arriver ici...\n");
