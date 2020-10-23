@@ -23,208 +23,63 @@ int main() {
     pipe(fdMaitre[1]); // Tube du joueur 0 au maître (sortie du cycle : entrée dans le maître).
     pid_t pidMaitre = getpid(); // PID du processus père (pour transmission aux fils).
     int fdJoueur[NOMBRE_JOUEURS][2]; // Descripteurs de fichiers pour les interactions entre deux joueurs consécutifs.
+    pid_t pidJoueur[NOMBRE_JOUEURS]; // Tableau des PID de chaque joueur.
     int numJoueur = -1; // Numéro du joueur courant ; le numéro du maître est -1.
-    int endGame = 0; // on déclare si le jeu est fini ou pas
-    int tourJoueur = 0;
+    int finDePartie = 0; // on déclare si le jeu est fini ou pas
     int nbTours = 0;
-    Infos info;
+    info_t info;
 
-    /**
-     * Définition de l'environnement de jeu.
-     */
-    Plateau plateau; // Déclaration du plateau de jeu.
-    viderPlateau(&plateau); // Initialisation du plateau avec toutes les cases vides.
-    int chevaux[NOMBRE_JOUEURS][NOMBRE_CHEVEAUX];
+    // On crée les pipes qui correspondent aux interactions entre joueurs.
+    for(int i = 0; i < NOMBRE_JOUEURS; i++) pipe(fdJoueur[i]);
 
-
-    for(int i = 0; i < NOMBRE_JOUEURS; i++) {
-        pipe(fdJoueur[i]); // On crée les pipes qui correspondent aux interactions entre joueurs.
-    }
-
+    // On crée un fils pour chaque joueur.
     for(int i = 0; i < NOMBRE_JOUEURS; i++) {
         if (getpid() == pidMaitre) {
-
-          if(fork() == -1){
-            fprintf(stderr, "%s\n", "Erreur fork");
-            exit(-1);
-          } // On crée un fils pour chaque joueur.
-
-          if (getpid() != pidMaitre) numJoueur = i; // On définit le numéro de chaque joueur.
+            if ((pidJoueur[i] = fork()) == -1) {
+                fprintf(stderr, "%s\n", "Erreur fork");
+                exit(-1);
+            }
+            if (getpid() != pidMaitre) numJoueur = i; // On définit le numéro de chaque joueur.
         }
     }
 
-    int entier = -1;
-
-  /*  while (!endGame && nbTours < 4){
-
-      switch (numJoueur) {
-          case 0:
-              endGame = readFile(fdMaitre[0][0], numJoueur);
-              writeFile(fdJoueur[0][1], numJoueur, endGame);
-
-              //endGame = readFile(fdJoueur[3][0], numJoueur);
-              //writeFile(fdMaitre[1][1], numJoueur, endGame);
-              tourJoueur = readFile(fdMaitre[0][0], numJoueur);
-              writeFile(fdJoueur[0][1], numJoueur, tourJoueur);
-              if (tourJoueur == numJoueur){
-                printf("c'est mon tour, %d\n", tourJoueur);
-
-                //lance de de
-              }
-
-
-
-              if (endGame){
-                exit(0);
-              } else {
-                printf("%d ne s'est pas bien arrêté\n", numJoueur);
-                exit(1);
-              }
-
-
-              break;
-          case 1:
-              endGame = readFile(fdJoueur[0][0], numJoueur);
-              writeFile(fdJoueur[1][1], numJoueur, endGame);
-
-              tourJoueur = readFile(fdJoueur[0][0], numJoueur);
-              writeFile(fdJoueur[1][1], numJoueur, tourJoueur);
-              if (tourJoueur == numJoueur){
-                printf("c'est mon tour, %d\n", tourJoueur);
-
-                //lance de de
-              }
-
-              if (endGame){
-                exit(0);
-              } else {
-                printf("%d ne s'est pas bien arrêté\n", numJoueur);
-                exit(1);
-              }
-
-              break;
-          case 2:
-              endGame = readFile(fdJoueur[1][0], numJoueur);
-              writeFile(fdJoueur[2][1], numJoueur, endGame);
-
-              tourJoueur = readFile(fdJoueur[1][0], numJoueur);
-              writeFile(fdJoueur[2][1], numJoueur, tourJoueur);
-              if (tourJoueur == numJoueur){
-                printf("c'est mon tour, %d\n", tourJoueur);
-
-                //lance de de
-              }
-
-              if (endGame){
-                exit(0);
-              } else {
-                printf("%d ne s'est pas bien arrêté\n", numJoueur);
-                exit(1);
-              }
-
-              break;
-          case 3:
-              endGame = readFile(fdJoueur[2][0], numJoueur);
-              //writeFile(fdJoueur[3][1], numJoueur, endGame);
-
-              tourJoueur = readFile(fdJoueur[2][0], numJoueur);
-
-              if (tourJoueur == numJoueur){
-                printf("c'est mon tour, %d\n", tourJoueur);
-              //  writeFile(fdJoueur[1][1], numJoueur, tourJoueur);
-                //lance de de
-              }
-
-              if (endGame){
-                exit(0);
-              } else {
-                printf("%d ne s'est pas bien arrêté\n", numJoueur);
-                exit(1);
-              }
-
-              break;
-          case -1:
-              writeFile(fdMaitre[0][1], numJoueur, info);
-              //endGame = readFile(fdMaitre[1][0], numJoueur);
-              printf("%d\n", endGame);
-
-              //tourJoueur = readFile(fdJoueur[1][0], numJoueur);
-              //printf("je suis dans le pere, tourJoueur : %d\n", tourJoueur);
-
-              int status;
-              nbTours += 1;
-              printf("nbTours = %d\n", nbTours);
-
-              for (int i = 0; i < NOMBRE_JOUEURS; i++){
-                  wait(&status);
-                  printf("status = %d\n", status);
-              }
-
-              break;
-          default:
-              printf("Je ne devrais pas arriver ici...\n");
-              break;
-      }
-    }*/
-
-
-    while (!endGame && nbTours < 4){
+    // Initialisation du jeu dans le maître.
+    if (getpid() == pidMaitre) {
+        plateau_t plateau; // Déclaration du plateau de jeu.
+        viderPlateau(&plateau); // Initialisation du plateau avec toutes les cases vides.
+        //int chevaux[NOMBRE_JOUEURS][NOMBRE_CHEVEAUX];
+    }
+    
+    info.type = IT_TOUR_JOUEUR;
+    info.statut = ST_DEMANDE;
+    info.data = 0;
+    
+    write(fdMaitre[0][1], &info, sizeof(info_t));
+    // Boucle de déroulement de la partie.
+    while (!finDePartie && nbTours < 4){
 
       switch (numJoueur) {
           case 0:
-              endGame = readFile(fdMaitre[0][0], numJoueur);
-              writeFile(fdJoueur[0][1], numJoueur, endGame);
+            read(fdMaitre[0][0], &info, sizeof(info_t));
+            write(fdJoueur[0][1], &info, sizeof(info_t));
 
-            /*  endGame = readFile(fdJoueur[3][0], numJoueur);
-              writeFile(fdMaitre[1][1], numJoueur, endGame);*/
-              tourJoueur = readFile(fdMaitre[0][0], numJoueur);
-              writeFile(fdJoueur[0][1], numJoueur, tourJoueur);
-              if (tourJoueur == numJoueur){
-                printf("c'est mon tour, %d\n", tourJoueur);
-
-                //lance de de
-              }
-
-
-
-              if (endGame){
-                exit(0);
-              } else {
-                printf("%d ne s'est pas bien arrêté\n", numJoueur);
-                exit(1);
-              }
-
-
-              break;
+            read(fdJoueur[3][0], &info, sizeof(info_t));
+            write(fdMaitre[1][1], &info, sizeof(info_t));
+            break;
           case 1 :
           case 2 :
           case 3 :
-              info = readFile(fdJoueur[numJoueur - 1][0], numJoueur);
-              interpreteInfo(info, numJoueur);
-
+              read(fdJoueur[(numJoueur - 1) % NOMBRE_JOUEURS][0], &info, sizeof(info_t));
+              interpreteInfo(&info, numJoueur, fdJoueur);
               break;
-
           case -1:
-              writeFile(fdMaitre[0][1], numJoueur, info);
-              //endGame = readFile(fdMaitre[1][0], numJoueur);
-              printf("%d\n", endGame);
-
-              //tourJoueur = readFile(fdJoueur[1][0], numJoueur);
-              //printf("je suis dans le pere, tourJoueur : %d\n", tourJoueur);
-
-              int status;
-              nbTours += 1;
-              printf("nbTours = %d\n", nbTours);
-
-              for (int i = 0; i < NOMBRE_JOUEURS; i++){
-                  wait(&status);
-                  printf("status = %d\n", status);
-              }
-
-              break;
+          
+            read(fdMaitre[1][0], &info, sizeof(info_t));
+            nbTours++;
+            break;
           default:
-              printf("Je ne devrais pas arriver ici...\n");
-              break;
+            printf("Je ne devrais pas arriver ici...\n");
+            break;
       }
     }
 
