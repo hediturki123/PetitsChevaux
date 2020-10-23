@@ -7,6 +7,8 @@
 #ifndef __PC_UTILS_H__
 #define __PC_UTILS_H__
 
+// TODO: écrire les commentaires des fonctions et structures
+
 typedef enum statut_t {
     ST_ERREUR = -1,
     ST_DEMANDE = 0,
@@ -23,8 +25,11 @@ typedef struct info_t {
     statut_t statut;
     info_type_t type;
     int data;
+    unsigned char source;
 } info_t;
 
-void interpreteInfo(info_t* info, int numJoueur, int fdJoueur[NOMBRE_JOUEURS][2]);
+void actionJoueur(info_t* info, int numJoueur, int fdJoueur[NOMBRE_JOUEURS][2]);
+
+void actionMaitre();
 
 #endif // !__PC_UTILS_H__

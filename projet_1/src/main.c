@@ -9,25 +9,18 @@
 #include "../hdr/pc_jeu.h"
 #include "../hdr/pc_utils.h"
 
-
-
-
 int main() {
-    /* On definit les descripteurs de fichiers du maitre du jeu (processus pere) qui en a 2 :
-    * - le premier pour intéragir du maitre au joueur definit par fdMaitre[0]
-    * - et le deuxieme pour interagir du joueur au maitre definit par fdMaitre[1]
-    * Ensuite on definit un descripteur de fichier par interaction entre 2 joueurs consecutifs
+    /**
+    * Déclaration des variables globales.
     */
     int fdMaitre[2][2]; // Descripteurs de fichiers du maître du jeu.
     pipe(fdMaitre[0]); // Tube du maître au joueur 0 (entrée dans le cycle ; sortie du maître).
-    pipe(fdMaitre[1]); // Tube du joueur 0 au maître (sortie du cycle : entrée dans le maître).
+    pipe(fdMaitre[1]); // Tube du joueur 0 au maître (sortie du cycle ; entrée dans le maître).
     pid_t pidMaitre = getpid(); // PID du processus père (pour transmission aux fils).
     int fdJoueur[NOMBRE_JOUEURS][2]; // Descripteurs de fichiers pour les interactions entre deux joueurs consécutifs.
     pid_t pidJoueur[NOMBRE_JOUEURS]; // Tableau des PID de chaque joueur.
     int numJoueur = -1; // Numéro du joueur courant ; le numéro du maître est -1.
-    int finDePartie = 0; // on déclare si le jeu est fini ou pas
-    int nbTours = 0;
-    info_t info;
+    int finDePartie = 0; // Booléen valant 0 si la partie est en cours, 1 sinon.
 
     // On crée les pipes qui correspondent aux interactions entre joueurs.
     for(int i = 0; i < NOMBRE_JOUEURS; i++) pipe(fdJoueur[i]);
@@ -43,34 +36,52 @@ int main() {
         }
     }
 
-    // Initialisation du jeu dans le maître.
+    info_t info; // Structure d'information propre à chaque processus servant à communiquer des données.
+
+    /** Initialisation du jeu dans le maître. */
     if (getpid() == pidMaitre) {
-        plateau_t plateau; // Déclaration du plateau de jeu.
-        viderPlateau(&plateau); // Initialisation du plateau avec toutes les cases vides.
-        int chevaux[NOMBRE_JOUEURS][NOMBRE_CHEVEAUX];
+        jeu_t jeu; // Déclaration de la structure de jeu.
+        int nbTours = 0; // Nombre de tours joués (i.e. nombre de fois que tous les jours ont tous joué).
+        viderPlateau(&(jeu.plateau)); // Initialisation du plateau avec toutes les cases vides.
+
+        // Définition de la première information à envoyer pour démarrer la partie.
+        info.type = IT_TOUR_JOUEUR; // L'information concerne le joueur à qui c'est le tour.
+        info.statut = ST_DEMANDE; // Il s'agit d'une demande de confirmation.
+        info.data = 0; // La donnée indique le joueur cible i.e. le joueur 0 pour commencer.
+        info.source = numJoueur; // La source de l'information est le maître du jeu (-1).
+
+        // Démarrage du jeu !
+        write(FD_M_J0[1], &info, sizeof(info_t)); // On envoie dans le cycle que c'est le tour au joueur 0.
     }
+
+    // TODO: fermer les pipes inutiles
 
     // Boucle de déroulement de la partie.
-    while (!finDePartie && nbTours < 4){
-
-      switch (numJoueur) {
-          case 0:
-              break;
-          case 1 :
-          case 2 :
-          case 3 :
-              read(fdJoueur[(numJoueur-1)%NOMBRE_JOUEURS][0], &info, sizeof(info_t));
-              interpreteInfo(&info, numJoueur, fdJoueur);
-              break;
-          case -1:
-              break;
-          default:
-              printf("Je ne devrais pas arriver ici...\n");
-              break;
-      }
+    while (!finDePartie) {
+        switch (numJoueur) {
+            case 0:
+                // Lecture des données du maître du jeu.
+                read(FD_M_J0[0], &info, sizeof(info_t));
+                actionJoueur(&info, numJoueur, fdJoueur);
+                // Lecture des données du dernier joueur (fin de cycle).
+                read(fdJoueur[NOMBRE_JOUEURS-1][0], &info, sizeof(info_t));
+                actionJoueur(&info, numJoueur, fdJoueur);
+                break;
+            case 1:
+            case 2:
+            case 3:
+                read(fdJoueur[(numJoueur-1)%NOMBRE_JOUEURS][0], &info, sizeof(info_t));
+                actionJoueur(&info, numJoueur, fdJoueur);
+                break;
+            case -1:
+                read(FD_J0_M[0], &info, sizeof(info_t));
+                actionMaitre(); // TODO: cf. pc_utils.c
+                break;
+            default:
+                printf("Je ne devrais pas arriver ici...\n");
+                break;
+            }
     }
-
-
 
     return 0;
 }
