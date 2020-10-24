@@ -24,6 +24,6 @@ int entierAleatoire(int min, int max) {
 
 // Fonction permettant de lancer un dé à six faces.
 // Le résultat est un entier compris entre 1 et 6.
-int lancerDe6() {
-    return entierAleatoire(1,6);
+unsigned char lancerDe6() {
+    return (unsigned char) entierAleatoire(1,6);
 }

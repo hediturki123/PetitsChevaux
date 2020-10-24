@@ -16,11 +16,11 @@
 // Une case de plateau de jeu.
 // L'entier -1 (CS_CASE_VIDE) correspond à une case vide, tandis qu'un entier n (n allant de 0 à 3) correspondent à un cheval du joueur n (CASE_Jn).
 typedef enum case_t {
-    CS_CASE_VIDE = -1,
-    CS_CVL_J0 = 0,
-    CS_CVL_J1 = 1,
-    CS_CVL_J2 = 2,
-    CS_CVL_J3 = 3
+    CS_CASE_VIDE = -1, // Une case vide.
+    CS_CVL_J0 = 0, // Un cheval du joueur 0.
+    CS_CVL_J1 = 1, // Un cheval du joueur 1.
+    CS_CVL_J2 = 2, // Un cheval du joueur 2.
+    CS_CVL_J3 = 3 // Un cheval du joueur 3.
 } case_t;
 
 // Un plateau de jeu contenant TAILLE_PLATEAU cases qui forment un parcours circulaire.
@@ -32,8 +32,9 @@ typedef struct plateau_t {
 
 // Un jeu contenant un plateau et les cheveaux de chaque joueur.
 typedef struct jeu_t {
-    plateau_t plateau;
-    unsigned char chevaux[NOMBRE_JOUEURS][NOMBRE_CHEVEAUX];
+    plateau_t plateau; // Plateau sur lequel se dérouelera le jeu.
+    unsigned char chevaux[NOMBRE_JOUEURS][NOMBRE_CHEVEAUX]; // Les chevaux de chaque joueur.
+    unsigned int nbTours; // Le nombre de tours effectués durant cette partie.
 } jeu_t;
 
 // Fonction permettant de vider un plateau de jeu.
@@ -49,6 +50,6 @@ int entierAleatoire(int min, int max);
 
 // Fonction permettant de lancer un dé à six faces.
 // Le résultat est un entier compris entre 1 et 6.
-int lancerDe6(void);
+unsigned char lancerDe6(void);
 
 #endif // !__PC_JEU_H__
