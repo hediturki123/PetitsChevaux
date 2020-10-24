@@ -4,7 +4,10 @@
 #ifndef __PC_JEU_H__
 #define __PC_JEU_H__
 
-/** Définition des constantes de l'environnement de jeu. */
+/**
+ * Définition des constantes de l'environnement de jeu.
+ * Ces contantes peuvent être redéfinies lors de la compilation pour moduler le jeu.
+ * */
 #define NOMBRE_JOUEURS 4 // Nombre de joueurs dans une partie ; par défaut 4, minimum 2, maximum 4.
 #define NOMBRE_CHEVEAUX 4 // Nombre de cheveaux par joueurs ; par défaut 4, minimum 1.
 #define TAILLE_PLATEAU 56 // Taille du plateau de jeu en nombre de cases ; par défaut 56, minimum 4 (doit être un multiple de 4).

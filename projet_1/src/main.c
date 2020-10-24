@@ -10,6 +10,19 @@
 #include "../hdr/pc_utils.h"
 
 int main() {
+    /** Vérification de la valeur des constantes. */
+    if (NOMBRE_JOUEURS <= 1 || NOMBRE_JOUEURS >= 5) {
+        fprintf(stderr, "Le nombre de joueurs doit être compris entre 2 et 4.\nTrouvé : %d\n", NOMBRE_JOUEURS);
+        exit(EXIT_FAILURE);
+    }
+    if (NOMBRE_CHEVEAUX < 1) {
+        fprintf(stderr, "Il doit y avoir au moins un cheval par joueur.\nTrouvé : %d\n", NOMBRE_CHEVEAUX);
+        exit(EXIT_FAILURE);
+    }
+    if (TAILLE_PLATEAU < 4 || !(TAILLE_PLATEAU % 4)) {
+        fprintf(stderr, "Le plateau doit avoir une taille positive et celle-ci doit être un multiple de 4.\nTrouvé : %d\n", TAILLE_PLATEAU);
+    }
+
     /**
     * Déclaration des variables globales.
     */
