@@ -1,7 +1,5 @@
 #include "../hdr/pc_jeu.h"
 
-// Fonction permettant de vider un plateau de jeu.
-// Les cases régulières aussi bien que les écuries sont réinitialisées à CS_CASE_VIDE (-1).
 void viderPlateau(plateau_t * p) {
     for (int i=0; i < TAILLE_PLATEAU; i++)
         p->cases[i] = CS_CASE_VIDE;
@@ -10,20 +8,14 @@ void viderPlateau(plateau_t * p) {
             p->ecuries[i][j] = CS_CASE_VIDE;
 }
 
-// Fonction permettant d'indiquer si une case est vide.
-// Retourne 1 si la case est vide, 0 sinon.
 int caseEstVide(case_t c) {
     return c == CS_CASE_VIDE;
 }
 
-// Fonction retournant un entier aléatoire compris entre min et max.
 int entierAleatoire(int min, int max) {
-    srand(time(NULL));
     return rand() % max + min;
 }
 
-// Fonction permettant de lancer un dé à six faces.
-// Le résultat est un entier compris entre 1 et 6.
-unsigned char lancerDe6() {
-    return (unsigned char) entierAleatoire(1,6);
+int lancerDe6() {
+    return entierAleatoire(1,6);
 }

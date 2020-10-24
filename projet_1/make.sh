@@ -1,0 +1,2 @@
+make mrproper
+make
