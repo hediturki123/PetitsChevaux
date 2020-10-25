@@ -21,13 +21,25 @@
 /// Définition des constantes de l'environnement de jeu.
 /// Ces contantes peuvent être redéfinies lors de la compilation pour moduler le jeu.
 #ifndef NOMBRE_JOUEURS
-    #define NOMBRE_JOUEURS 4 /** \def Nombre de joueurs dans une partie ; par défaut 4, minimum 2, maximum 4. */
+    /**
+     * \def NOMBRE_JOUEURS
+     * \brief Nombre de joueurs dans une partie ; par défaut 4, minimum 2, maximum 4.
+     */
+    #define NOMBRE_JOUEURS 4
 #endif // !NOMBRE_JOUEURS
 #ifndef NOMBRE_CHEVAUX
-    #define NOMBRE_CHEVAUX 4 /** \def Nombre de chevaux par joueurs ; par défaut 4, minimum 1. */
+    /**
+     * \def NOMBRE_CHEVAUX
+     * \brief Nombre de chevaux par joueurs ; par défaut 4, minimum 1.
+     */
+    #define NOMBRE_CHEVAUX 4
 #endif // !NOMBRE_CHEVAUX
 #ifndef TAILLE_PLATEAU
-    #define TAILLE_PLATEAU 56 /** \def Taille du plateau de jeu en nombre de cases ; par défaut 56, minimum 4 (doit être un multiple de 4). */
+    /**
+     * \def TAILLE_PLATEAU
+     * \brief Taille du plateau de jeu en nombre de cases ; par défaut 56, minimum 4 (doit être un multiple de 4).
+     */
+    #define TAILLE_PLATEAU 56
 #endif // !TAILLE_PLATEAU
 
 /**
