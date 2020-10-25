@@ -84,9 +84,9 @@ typedef struct jeu_t {
 /**
  * \fn void viderPlateau (plateau_t*);
  * \brief Fonction permettant de vider un plateau de jeu.
- * \param p Adresse du plateau de jeu à vider.
- *
  * Les cases régulières aussi bien que les écuries sont réinitialisées à CS_CASE_VIDE (-1).
+ *
+ * \param p Adresse du plateau de jeu à vider.
  */
 void viderPlateau(plateau_t* p);
 

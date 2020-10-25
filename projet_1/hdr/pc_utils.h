@@ -78,28 +78,28 @@ typedef struct info_t {
 /**
  * \fn info_t actionJoueur (info_t*, int, int[NOMBRE_JOUEURS][2], int[2][2])
  * \brief Action sur l'information reçue par un joueur.
+ * Dans cette fonction, un joueur traite l'information transmise par le joueur précédent.
+ * Si l'information concerne le joueur, ce dernier envoie une réponse appropriée par rapport à celle-ci. Sinon, il se
+ * contente de la transmettre au joueur suivant.
+ *
  * \param[in, out] info Information à traiter par le joueur.
  * \param[in] numJoueur Numéro du joueur effectuant l'action.
  * \param[in, out] fdJoueur Descripteurs de fichiers des joueurs.
  * \param[in] fdMaitre Descripteurs de fichiers du maître du jeu.
  * \return Type de l'information obtenue après traitement.
- *
- * Dans cette fonction, un joueur traite l'information transmise par le joueur précédent.
- * Si l'information concerne le joueur, ce dernier envoie une réponse appropriée par rapport à celle-ci. Sinon, il se
- * contente de la transmettre au joueur suivant.
  */
 info_t actionJoueur(info_t* info, int numJoueur, int fdJoueur[NOMBRE_JOUEURS][2], int fdMaitre[2][2]);
 
 /**
  * \fn info_t actionMaitre (info_t*, jeu_t*, int[NOMBRE_JOUEURS][2], int[2][2])
  * \brief Action sur l'information reçue par le maître du jeu.
+ * C'est ici que sont effectués la modification de l'état du jeu et l'affichage du déroulement de la partie.
+ *
  * \param[in, out] info Information à traiter par le maître du jeu.
  * \param[in, out] jeu Jeu à mettre à jour vis-à-vis de l'information.
  * \param[in] fdJoueur Descripteurs de fichiers des joueurs.
  * \param[in, out] fdMaitre Descripteurs de fichiers du maître du jeu.
  * \return Type de l'information obtenue après traitement.
- *
- * C'est ici que sont effectués la modification de l'état du jeu et l'affichage du déroulement de la partie.
  */
 info_t actionMaitre(info_t* info, jeu_t* jeu, int fdJoueur[NOMBRE_JOUEURS][2], int fdMaitre[2][2]);
 
@@ -123,12 +123,12 @@ int mathMod(int n, int m);
 /**
  * \fn void fermDescInut (int, int[NOMBRE_JOUEURS][2], int[2][2])
  * \brief Fonction de fermeture des descripteurs inutiles du programme.
+ * Cette fonction permet la fermeture des descripteurs de fichiers inutiles au maître du jeu ainsi
+ * qu'aux joueurs, afin d'éviter de rester en attente de ceux-ci à la fin du programme.
+ *
  * \param[in] numJoueur Numéro du joueur ayant des descripteurs à fermer.
  * \param[in, out] fdJoueur Structure des descripteurs de joueurs.
  * \param[in, out] fdMaitre Structure des descripteurs du maître du jeu.
- *
- * Cette fonction permet la fermeture des descripteurs de fichiers inutiles au maître du jeu ainsi
- * qu'aux joueurs, afin d'éviter de rester en attente de ceux-ci à la fin du programme.
  */
 void fermDescInut(int numJoueur, int fdJoueur[NOMBRE_JOUEURS][2], int fdMaitre[2][2]);
 
