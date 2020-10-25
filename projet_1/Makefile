@@ -6,7 +6,7 @@ CFLAGS=-Wall -std=c11
 
 # Listes des dépendances et des fichiers objets
 DEPS=hdr/pc_jeu.h hdr/pc_utils.h
-OBJS=obj/petitschevaux.o obj/pc_jeu.o obj/pc_utils.o
+OBJS=obj/main.o obj/pc_jeu.o obj/pc_utils.o
 
 # Nom de l'exécutable
 EXEC=petitschevaux
