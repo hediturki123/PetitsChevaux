@@ -1,3 +1,16 @@
+/**
+ * \file pc_utils.c
+ * \brief Module utilitaire du projet Petits Chevaux.
+ * \author Hedi TURKI SANEKLI, Alexis YVON
+ * \version 1.0
+ * \date Octobre 2020
+ *
+ * Ce fichier contient les fonctions utilitaires du projet Petits Chevaux.
+ * Ces fonctions permettent notamment la mise en place du protocole de communication
+ * entre le processus père (maître du jeu) et ses fils (joueurs).
+ * Il y a également diverses fonctions d'affichage et de calcul.
+ */
+
 #include "../hdr/pc_utils.h"
 
 info_t actionJoueur(info_t *info, int numJoueur, int fdJoueur[NOMBRE_JOUEURS][2], int fdMaitre[2][2]) {
@@ -55,10 +68,10 @@ info_t actionMaitre(info_t* info, jeu_t* jeu, int fdJoueur[NOMBRE_JOUEURS][2], i
                 numJoueur = info->data/10;
                 int de6 = info->data - 10*numJoueur;
                 printf("> \033[0;3%dmJoueur %d\033[0;0m a fait un \033[0;3m%d\033[0;0m à son lancé.\n", numJoueur+1, numJoueur, de6);
-                // TODO: mettre à jour le jeu.
+                // TODO: Mettre à jour la structure de jeu.
                 reponse.source = -1;
                 reponse.statut = ST_DEMANDE;
-                if (jeu->nbTours > 4) { // FIXME: mettre la bonne condition de fin de jeu.
+                if (jeu->nbTours > 4) { // FIXME: Mettre la bonne condition de fin de jeu.
                     reponse.type = IT_FIN_PARTIE;
                     reponse.data = 0;
                 } else {
@@ -87,7 +100,6 @@ info_t actionMaitre(info_t* info, jeu_t* jeu, int fdJoueur[NOMBRE_JOUEURS][2], i
             break;
 
         default:
-            // TODO: gestion de l'erreur
             break;
         }
         write(FD_M_J0[1], &reponse, sizeof(info_t));
